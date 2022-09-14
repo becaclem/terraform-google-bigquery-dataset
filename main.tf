@@ -23,6 +23,17 @@ resource "google_bigquery_dataset" "dataset" {
       user_by_email  = try(access.value.user_by_email, null)
       special_group  = try(access.value.special_group, null)
 
+      dynamic "dataset" {
+        for_each = try(access.value.dataset, {})
+
+        content {
+          dataset {
+            dataset_id = dataset.value.dataset_id
+            project_id = dataset.value.project_id
+          }
+          target_types = ["VIEWS"]
+        }
+      }
       dynamic "view" {
         for_each = try(access.value.view, {})
 
